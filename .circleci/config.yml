@@ -8,7 +8,12 @@ jobs:
     docker:
       # Specify the version you desire here
       - image: circleci/php:7.3-node-browsers
-      - image: circleci/mysql:latest
+      - image: circleci/mysql:8.0.19
+        environment:
+          MYSQL_ROOT_PASSWORD: rootpw
+          MYSQL_DATABASE: test_ocdn
+          MYSQL_USER: ocdn
+          MYSQL_PASSWORD: password
     steps:
       - checkout
 
@@ -31,5 +36,7 @@ jobs:
             - ./vendor
 
       # prepare the database
-
+      - run: php bin/console doctrine:database:create
+      - run: php bin/console doctrine:migrations:diff
+      - run: php bin/console doctrine:migrations:migrate -n
       # run tests with behat
